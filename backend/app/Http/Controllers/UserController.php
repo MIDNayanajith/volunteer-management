@@ -19,7 +19,7 @@ class UserController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json(['errors'=>$validator->errors()], 422); // FIXED: Added missing comma
+            return response()->json(['errors'=>$validator->errors()], 422);
         }
 
         $user = User::create([
@@ -57,4 +57,22 @@ class UserController extends Controller
             'dashboard_message'=>'Welcome to volunteer dashboard'
         ]);
     }
+    public function getVolunteers()
+{
+    $volunteers = User::where('user_type', 3)
+                      ->where('is_delete', 0)
+                      ->get();
+
+    if ($volunteers->count() > 0) {
+        return response()->json([
+            'status' => 200,
+            'data' => $volunteers
+        ], 200);
+    }
+
+    return response()->json([
+        'status' => 404,
+        'message' => 'No volunteers found'
+    ], 404);
+}
 }

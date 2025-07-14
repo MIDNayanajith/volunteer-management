@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('image');
             $table->enum('status',['new','processing','complete'])->default('new');
             $table->enum('priority', ['high', 'medium', 'low'])->default('medium');
             $table->date('due_date');
