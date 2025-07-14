@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\Task;
 use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
@@ -56,4 +58,29 @@ class AdminController extends Controller
             'dashboard_message'=>'Welcome to admin dashboard'
         ]);
     }
+       public function getDashboardStats()
+    {
+        $totalVolunteers = User::where('user_type', 3)
+                               ->where('is_delete', 0)
+                               ->count();
+
+        $totalEvents = Event::where('is_delete', 0)->count();
+
+        $totalTasks = Task::where('is_delete', 0)->count();
+
+        $completedTasks = Task::where('status', 'complete')
+                              ->where('is_delete', 0)
+                              ->count();
+
+        return response()->json([
+            'status' => 200,
+            'stats' => [
+                'totalVolunteers' => $totalVolunteers,
+                'totalEvents' => $totalEvents,
+                'totalTasks' => $totalTasks,
+                'completedTasks' => $completedTasks,
+            ]
+        ], 200);
+    }
+
 }
