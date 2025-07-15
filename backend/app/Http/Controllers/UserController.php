@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Feedback;
+use App\Models\Task;
 use App\Models\User;
 use Hash;
 use Illuminate\Http\Request;
@@ -74,5 +76,59 @@ class UserController extends Controller
         'status' => 404,
         'message' => 'No volunteers found'
     ], 404);
+}
+    public function getProfile()
+{
+    try {
+        $user = JWTAuth::parseToken()->authenticate();
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    // Add any additional profile data you might have
+    $profileData = [
+        'name' => $user->name,
+        'email' => $user->email,
+        'created_at' => $user->created_at,
+        // Add other fields if available
+    ];
+
+    return response()->json([
+        'status' => 200,
+        'profile' => $profileData
+    ], 200);
+}
+
+    public function getVolunteerStats()
+{
+    $userId = auth()->user()->id;
+
+    $totalTasks = Task::where('assigned_to', $userId)
+                      ->where('is_delete', 0)
+                      ->count();
+
+    $completedTasks = Task::where('assigned_to', $userId)
+                          ->where('status', 'complete')
+                          ->where('is_delete', 0)
+                          ->count();
+
+    $pendingTasks = Task::where('assigned_to', $userId)
+                        ->whereIn('status', ['new', 'processing'])
+                        ->where('is_delete', 0)
+                        ->count();
+
+    $averageRating = Feedback::where('volunteer_id', $userId)
+                             ->where('is_delete', 0)
+                             ->avg('rating');
+
+    return response()->json([
+        'status' => 200,
+        'stats' => [
+            'totalTasks' => $totalTasks,
+            'completedTasks' => $completedTasks,
+            'pendingTasks' => $pendingTasks,
+            'averageRating' => $averageRating ? round($averageRating, 1) : 0
+        ]
+    ], 200);
 }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+//use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class TaskController extends Controller
@@ -127,5 +127,29 @@ class TaskController extends Controller
             'message' => 'Task deleted successfully'
         ], 200);
     }
+
+    //Get assigned task for user
+public function getAssignedTasks()
+{
+    $userId = auth()->user()->id;
+
+    $tasks = Task::with('event') // Eager load event relationship
+                ->where('assigned_to', $userId)
+                ->where('is_delete', 0)
+                ->get();
+
+    if ($tasks->count() > 0) {
+        return response()->json([
+            'status' => 200,
+            'data' => $tasks
+        ], 200);
+    }
+
+    return response()->json([
+        'status' => 200, // Change to 200 since no tasks is a valid state
+        'message' => 'No tasks assigned to you',
+        'data' => []
+    ], 200);
+}
 
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,10 @@ Route::middleware(['auth:api', 'user.type:1'])->group(function () {
     Route::put('/admin/updateEvent/{id}', [EventController::class, 'updateEvent']);
     Route::delete('/admin/deleteEvent/{id}', [EventController::class, 'deleteEvent']);
 
+    Route::get('/admin/volunteers-management', [AdminController::class, 'getVolunteersForManagement']);
+
+
+
 
 });
 
@@ -32,6 +37,18 @@ Route::middleware(['auth:api', 'user.type:1'])->group(function () {
 Route::middleware(['auth:api', 'user.type:3'])->group(function () {
     // Route::post('/register', [UserController::class, 'register']); // FIXED: This should be public
     Route::get('/volunteer/dashboard', [UserController::class, 'dashboard']);
+    Route::get('/volunteer/getAssignedTasks', [TaskController::class, 'getAssignedTasks']);
+
+ // Feedback routes for volunteers
+    Route::post('/volunteer/feedback', [FeedbackController::class, 'createFeedback']);
+    Route::get('/volunteer/feedback/task/{taskId}', [FeedbackController::class, 'getFeedbackByTask']);
+    Route::put('/volunteer/feedback/{id}', [FeedbackController::class, 'updateFeedback']);
+    Route::delete('/volunteer/feedback/{id}', [FeedbackController::class, 'deleteFeedback']);
+    Route::get('/volunteer/feedbacks', [FeedbackController::class, 'getVolunteerFeedbacks']);
+    Route::get('/volunteer/getUserEvents', [EventController::class, 'getUserEvents']);
+
+    Route::get('/volunteer/profile', [UserController::class, 'getProfile']);
+    Route::get('/volunteer/stats', [UserController::class, 'getVolunteerStats']);
 });
 
 // Common protected routes

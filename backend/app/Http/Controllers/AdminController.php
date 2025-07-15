@@ -83,4 +83,36 @@ class AdminController extends Controller
         ], 200);
     }
 
+    public function getVolunteersForManagement()
+{
+    $volunteers = User::where('user_type', 3)
+        ->where('is_delete', 0)
+        ->withCount([
+            'assignedTasks as tasks_assigned' => function ($query) {
+                $query->where('is_delete', 0);
+            },
+            'assignedTasks as tasks_completed' => function ($query) {
+                $query->where('is_delete', 0)
+                    ->where('status', 'complete');
+            }
+        ])
+        ->withAvg('feedbacks as average_rating', 'rating')
+        ->get();
+
+    $formattedVolunteers = $volunteers->map(function ($volunteer) {
+        return [
+            'id' => $volunteer->id,
+            'name' => $volunteer->name,
+            'email' => $volunteer->email,
+            'tasks_assigned' => $volunteer->tasks_assigned,
+            'tasks_completed' => $volunteer->tasks_completed,
+            'rating' => $volunteer->average_rating ? round($volunteer->average_rating, 1) : 0,
+        ];
+    });
+
+    return response()->json([
+        'status' => 200,
+        'volunteers' => $formattedVolunteers
+    ], 200);
+}
 }
