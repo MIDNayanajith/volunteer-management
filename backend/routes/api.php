@@ -27,6 +27,7 @@ Route::middleware(['auth:api', 'user.type:1'])->group(function () {
     Route::delete('/admin/deleteEvent/{id}', [EventController::class, 'deleteEvent']);
 
     Route::get('/admin/volunteers-management', [AdminController::class, 'getVolunteersForManagement']);
+    Route::get('/admin/feedbacks', [AdminController::class, 'getAllFeedbacks']);
 
 
 

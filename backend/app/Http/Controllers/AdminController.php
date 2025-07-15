@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Feedback;
 use App\Models\Task;
 use App\Models\User;
 use Hash;
@@ -113,6 +114,30 @@ class AdminController extends Controller
     return response()->json([
         'status' => 200,
         'volunteers' => $formattedVolunteers
+    ], 200);
+}
+
+    public function getAllFeedbacks()
+{
+    $feedbacks = Feedback::with(['task', 'volunteer'])
+        ->where('is_delete', 0)
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    $formattedFeedbacks = $feedbacks->map(function ($feedback) {
+        return [
+            'id' => $feedback->id,
+            'task_title' => $feedback->task ? $feedback->task->title : 'Task Deleted',
+            'volunteer_name' => $feedback->volunteer ? $feedback->volunteer->name : 'Volunteer Deleted',
+            'rating' => $feedback->rating,
+            'comment' => $feedback->comment,
+            'created_at' => $feedback->created_at->toDateTimeString(),
+        ];
+    });
+
+    return response()->json([
+        'status' => 200,
+        'feedbacks' => $formattedFeedbacks
     ], 200);
 }
 }
