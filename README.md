@@ -87,24 +87,6 @@ Use these seeded credentials to log in:
 
 ---
 
-## 📂 Project Structure
-
-project-root/
-├── backend/
-│ ├── app/
-│ ├── database/seeders/
-│ │ ├── UserSeeder.php
-│ │ ├── EventSeeder.php
-│ │ ├── TaskSeeder.php
-│ │ └── FeedbackSeeder.php
-│ └── ...
-├── frontend/
-│ ├── src/
-│ ├── public/
-│ └── ...
-├── README.md
-└── .env.example
-
 ## 🛠 Setup Instructions
 
 ### 🔧 Prerequisites
