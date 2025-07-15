@@ -26,4 +26,9 @@ class Feedback extends Model
     {
         return $this->belongsTo(User::class, 'volunteer_id');
     }
+     // Scope for active feedbacks
+    public function scopeActive($query)
+    {
+        return $query->where('is_delete', 0);
+    }
 }

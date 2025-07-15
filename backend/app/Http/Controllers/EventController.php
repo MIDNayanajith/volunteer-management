@@ -122,4 +122,42 @@ public function deleteEvent($id)
         'message' => 'Event deleted successfully'
     ], 200);
 }
+
+
+    public function getUserEvents()
+    {
+        $userId = auth()->user()->id;
+
+        // Get events where the user has assigned tasks
+        $events = Event::whereHas('tasks', function ($query) use ($userId) {
+            $query->where('assigned_to', $userId)
+                  ->where('is_delete', 0);
+        })
+        ->where('is_delete', 0)
+        ->withCount([
+            'tasks as total_tasks' => function ($query) use ($userId) {
+                $query->where('assigned_to', $userId)
+                      ->where('is_delete', 0);
+            },
+            'tasks as completed_tasks' => function ($query) use ($userId) {
+                $query->where('assigned_to', $userId)
+                      ->where('status', 'complete')
+                      ->where('is_delete', 0);
+            }
+        ])
+        ->get();
+
+        if ($events->count() > 0) {
+            return response()->json([
+                'status' => 200,
+                'data' => $events
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'No events found',
+            'data' => []
+        ], 200);
+    }
 }

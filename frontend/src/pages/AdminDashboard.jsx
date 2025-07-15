@@ -3,10 +3,12 @@ import { useAuth } from "../context/AuthContext";
 import AdminOverview from "../components/admin/AdminOverview";
 import AdminVolunteerManagement from "../components/admin/AdminVolunteerManagement";
 import AdminEventManagement from "../components/admin/AdminEventManagement";
+import AdminFormModal from "../components/admin/AdminFormModal"; // Add this import
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
+  const [showAdminModal, setShowAdminModal] = useState(false); // State for modal visibility
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -30,8 +32,17 @@ const AdminDashboard = () => {
               <h1 className="h3 mb-0">Admin Dashboard</h1>
               <p className="text-muted">Welcome back, {user?.name}!</p>
             </div>
-            <div className="badge bg-primary fs-6">Administrator</div>
+            <div className="d-flex align-items-center">
+              <button
+                className="btn btn-primary btn-sm me-2"
+                onClick={() => setShowAdminModal(true)}
+              >
+                <i className="fas fa-user-plus me-1"></i>Add Admin
+              </button>
+            </div>
           </div>
+
+          {/* ... rest of the code ... */}
 
           {/* Navigation Tabs */}
           <ul className="nav nav-tabs mb-4">
@@ -67,6 +78,12 @@ const AdminDashboard = () => {
 
           {/* Tab Content */}
           <div className="tab-content">{renderTabContent()}</div>
+
+          {/* Admin Registration Modal */}
+          <AdminFormModal
+            show={showAdminModal}
+            onClose={() => setShowAdminModal(false)}
+          />
         </div>
       </div>
     </div>
