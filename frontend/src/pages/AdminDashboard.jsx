@@ -3,12 +3,13 @@ import { useAuth } from "../context/AuthContext";
 import AdminOverview from "../components/admin/AdminOverview";
 import AdminVolunteerManagement from "../components/admin/AdminVolunteerManagement";
 import AdminEventManagement from "../components/admin/AdminEventManagement";
-import AdminFormModal from "../components/admin/AdminFormModal"; // Add this import
+import AdminFeedbackManagement from "../components/admin/AdminFeedbackManagement"; // New import
+import AdminFormModal from "../components/admin/AdminFormModal";
 
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
-  const [showAdminModal, setShowAdminModal] = useState(false); // State for modal visibility
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -18,6 +19,8 @@ const AdminDashboard = () => {
         return <AdminVolunteerManagement />;
       case "events":
         return <AdminEventManagement />;
+      case "feedback": // New tab
+        return <AdminFeedbackManagement />;
       default:
         return <AdminOverview />;
     }
@@ -41,8 +44,6 @@ const AdminDashboard = () => {
               </button>
             </div>
           </div>
-
-          {/* ... rest of the code ... */}
 
           {/* Navigation Tabs */}
           <ul className="nav nav-tabs mb-4">
@@ -72,6 +73,17 @@ const AdminDashboard = () => {
                 onClick={() => setActiveTab("events")}
               >
                 <i className="fas fa-calendar-alt me-2"></i>Events
+              </button>
+            </li>
+            {/* New Feedback Tab */}
+            <li className="nav-item">
+              <button
+                className={`nav-link ${
+                  activeTab === "feedback" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("feedback")}
+              >
+                <i className="fas fa-comment-alt me-2"></i>Feedback
               </button>
             </li>
           </ul>
